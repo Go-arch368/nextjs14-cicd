@@ -1,0 +1,38 @@
+name: Continuous Integration
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.9.0'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run format check
+        run: npm run format
+
+      - name: Check commit message
+        uses: wagoid/commitlint-github-action@v3
+        with:
+          configFile: commitlint.config.cjs  # Updated file name
+          firstParent: true
+          failOnWarnings: false
+          helpURL: https://github.com/conventional-changelog/commitlint/#what-is-commitlint
+          token: ${{ secrets.GITHUB_TOKEN }}
